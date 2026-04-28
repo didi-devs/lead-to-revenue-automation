@@ -1,0 +1,484 @@
+{
+  "name": "Lead Capture Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-capture",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -672,
+        0
+      ],
+      "id": "8d2295f9-0953-4d99-8bc7-833378cae5e6",
+      "name": "Webhook",
+      "webhookId": "f75fe37e-f481-4e9b-8e6e-8d1a59ab740e",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "378ac56e-9e8a-4e6f-93c8-e12c23c72b0e",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "2b563fc1-b134-43b7-bc94-614904b3245b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst raw = $input.first().json.body;\nconst parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;\n\nreturn [{\n  json: {\n    fullName: parsed.fullName,\n    email: parsed.email,\n    phone: parsed.phone,\n    signupDate: parsed.signupDate,\n    source: parsed.source\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        0
+      ],
+      "id": "4ae1020a-f276-4a36-8c4a-86b145b6e15c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI",
+          "mode": "list",
+          "cachedResultName": "Leads Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.fullName }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Date": "={{ $json.signupDate }}",
+            "Status": "New ",
+            "Source": "={{ $json.source }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hubspot ID",
+              "displayName": "Hubspot ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        -16
+      ],
+      "id": "53fd1fab-ddfb-4837-990a-663a2ae89e4b",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cw74AOL8I2LgDudo",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hubapi.com/crm/v3/objects/contacts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer pat-eu1-69ce036a-0c8e-4d3a-b96d-61fc2105e8b5"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"properties\": {\n    \"email\": \"{{ $json.Email }}\",\n    \"firstname\": \"{{ $json.Name }}\",\n    \"phone\": \"{{ $json.Phone }}\",\n    \"hs_lead_status\": \"NEW\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        560,
+        -16
+      ],
+      "id": "abecc7af-ce20-4a4e-ae22-9dccddf39a49",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('HTTP Request').item.json.properties.email }}",
+        "subject": "=Welcom to FlowCart!",
+        "message": "=Hi {{ $('HTTP Request').item.json.properties.firstname }}, \nWelcome to FlowCart! 🍽️ \n\nWe're thrilled to have you on board. You're now one step  closer to discovering your next favorite meal.\n\nHere's what you can look forward to: \n🍕 Browse hundreds of delicious meals 🚀 Fast and reliable delivery 💳 Secure and easy payments ⭐ Exclusive deals just for you  Your account is ready — let's get started!  \n\nBon appétit! 🍴 \n\nThe FlowCart Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        -16
+      ],
+      "id": "bb80b24f-f144-4994-8fb9-080e2867cba0",
+      "name": "Send a message",
+      "webhookId": "4a5cbcb1-5680-47fd-8253-df2f2f623329",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "JONELpWlw1129BrG",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI",
+          "mode": "list",
+          "cachedResultName": "Leads Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Hubspot ID": "={{ $json.id }}",
+            "Email": "={{ $json.properties.email }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hubspot ID",
+              "displayName": "Hubspot ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        -16
+      ],
+      "id": "c5dcb49f-6725-43a2-b7a5-89d67f09dd2d",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cw74AOL8I2LgDudo",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AMZHU6L64",
+          "mode": "list",
+          "cachedResultName": "all-divine-favour"
+        },
+        "text": "=🆕 New Lead Captured! \n👤 Name: {{ $('Code in JavaScript').item.json.fullName }}\n📧 Email: {{ $('Code in JavaScript').item.json.email }} \n📱 Phone: {{ $('Code in JavaScript').item.json.phone }}\n🌐 Source: {{ $('Code in JavaScript').item.json.source }}\n🕐 Time: {{ $('Code in JavaScript').item.json.signupDate }}\n🔗 HubSpot ID: {{ $('HTTP Request').item.json.id }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        1536,
+        -16
+      ],
+      "id": "b6b5e4d7-514a-4139-aa7b-3e314caa98eb",
+      "name": "Send a message1",
+      "webhookId": "b167b0ee-7e5b-4465-9f73-412908f5bf11",
+      "credentials": {
+        "slackApi": {
+          "id": "gDwgjKyoa6htjG7R",
+          "name": "Slack account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "6dc646c8-4f51-4dac-bab1-a0298ccf54f0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b929b6ba2d4a8d33d312114f1a0c53d6d928fdb6395a910452f73d4e5e976ad"
+  },
+  "id": "TjEc1FAv9a7O20ty",
+  "tags": []
+}

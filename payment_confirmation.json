@@ -1,0 +1,514 @@
+{
+  "name": "Payment Confirmation Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "payment-confirmed",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8285f8d7-8144-4465-b4d6-1332c3b1edae",
+      "name": "Webhook",
+      "webhookId": "68abfa5b-9e60-4bfa-8c84-55a24c2cf013"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst raw = $input.first().json.body;\nconst parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;\n\nreturn [{\n  json: {\n    orderId: parsed.orderId,\n    fullName: parsed.fullName,\n    email: parsed.email,\n    phone: parsed.phone,\n    product: parsed.product,\n    amount: parsed.amount,\n    paystackReference: parsed.paystackReference,\n    paymentDate: parsed.paymentDate,\n    status: parsed.status\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        -64
+      ],
+      "id": "a0da1305-73f5-4a0d-bab0-f7bddbd8f958",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI",
+          "mode": "list",
+          "cachedResultName": "Leads Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1649422745,
+          "mode": "list",
+          "cachedResultName": "Payments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit#gid=1649422745"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order ID": "={{ $json.orderId }}",
+            "Name": "={{ $json.fullName }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Product": "={{ $json.product }}",
+            "Amount": "={{ $json.amount }}",
+            "Paystack Reference": "={{ $json.paystackReference }}",
+            "Date": "={{ $json.paymentDate }}",
+            "Payment Status": "={{ $json.status }}"
+          },
+          "matchingColumns": [
+            "Order ID"
+          ],
+          "schema": [
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Paystack Reference",
+              "displayName": "Paystack Reference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        16
+      ],
+      "id": "e205a398-3a87-461a-b1c7-8e4394121cc8",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cw74AOL8I2LgDudo",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI",
+          "mode": "list",
+          "cachedResultName": "Leads Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 253408840,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit#gid=253408840"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order ID": "={{ $('Code in JavaScript').item.json.orderId }}",
+            "Payment Status": "Paid"
+          },
+          "matchingColumns": [
+            "Order ID"
+          ],
+          "schema": [
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Paystack Reference",
+              "displayName": "Paystack Reference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Payment Status",
+              "displayName": "Payment Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        -48
+      ],
+      "id": "0102b471-f2c8-4ea9-afeb-fe1713f65a08",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cw74AOL8I2LgDudo",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.hubapi.com/crm/v3/objects/deals/{{ $('Get row(s) in sheet').item.json['Hubspot Deal ID'] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer pat-eu1-69ce036a-0c8e-4d3a-b96d-61fc2105e8b5"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"properties\": {\n    \"dealstage\": \"closedwon\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1024,
+        -64
+      ],
+      "id": "e40519f2-a43e-4ccb-963a-cd70abe263c1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI",
+          "mode": "list",
+          "cachedResultName": "Leads Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 253408840,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XAtU0bxGWIDiwY-bp3grgFaA0R_0kohgdXoa-DSTANI/edit#gid=253408840"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Order ID",
+              "lookupValue": "={{ $('Code in JavaScript').item.json.orderId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        -48
+      ],
+      "id": "9891f5b3-d9b2-43c8-86a1-ce1cbfc90c36",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cw74AOL8I2LgDudo",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Code in JavaScript').item.json.email }}",
+        "subject": "Payment Confirmed — FlowCart ✅",
+        "message": "=<div style=\"font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:20px;\">\n  <h2 style=\"color:#000;\">Payment Confirmed! ✅</h2>\n  <p>Hi {{ $('Code in JavaScript').item.json.fullName }},</p>\n  <p>We've received your payment. Here's your receipt:</p>\n  \n  <table style=\"width:100%;border-collapse:collapse;margin:20px 0;\">\n    <tr style=\"background:#f5f5f5;\">\n      <td style=\"padding:10px;border:1px solid #ddd;\"><strong>Order ID</strong></td>\n      <td style=\"padding:10px;border:1px solid #ddd;\">{{ $('Code in JavaScript').item.json.orderId }}</td>\n    </tr>\n    <tr>\n      <td style=\"padding:10px;border:1px solid #ddd;\"><strong>Product</strong></td>\n      <td style=\"padding:10px;border:1px solid #ddd;\">{{ $('Code in JavaScript').item.json.product }}</td>\n    </tr>\n    <tr style=\"background:#f5f5f5;\">\n      <td style=\"padding:10px;border:1px solid #ddd;\"><strong>Amount Paid</strong></td>\n      <td style=\"padding:10px;border:1px solid #ddd;\">₦{{ $('Code in JavaScript').item.json.amount / 100 }}</td>\n    </tr>\n    <tr>\n      <td style=\"padding:10px;border:1px solid #ddd;\"><strong>Reference</strong></td>\n      <td style=\"padding:10px;border:1px solid #ddd;\">{{ $('Code in JavaScript').item.json.paystackReference }}</td>\n    </tr>\n    <tr style=\"background:#f5f5f5;\">\n      <td style=\"padding:10px;border:1px solid #ddd;\"><strong>Status</strong></td>\n      <td style=\"padding:10px;border:1px solid #ddd;\">✅ Paid</td>\n    </tr>\n  </table>\n\n  <p>Thank you for shopping with FlowCart!</p>\n  <br>\n  <p><strong>The FlowCart Team</strong></p>\n  <a href=\"https://flowcart.lovable.app\" \n     style=\"background:#000;color:#fff;padding:12px 24px;\n            border-radius:6px;text-decoration:none;\">\n    Shop Again\n  </a>\n</div>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        -64
+      ],
+      "id": "de4f25fb-c54b-46cc-bdf2-ac532b525334",
+      "name": "Send a message",
+      "webhookId": "1368ba0c-52e3-4c82-942c-809934975d93",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "JONELpWlw1129BrG",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AMZHU6L64",
+          "mode": "list",
+          "cachedResultName": "all-divine-favour"
+        },
+        "text": "=💰 Payment Confirmed!\n👤 Name: {{ $('Code in JavaScript').item.json.fullName }}\n📧 Email: {{ $('Code in JavaScript').item.json.email }}\n📱 Phone: {{ $('Code in JavaScript').item.json.phone }}\n📦 Product: {{ $('Code in JavaScript').item.json.product }}\n💵 Amount Paid: ₦{{ $('Code in JavaScript').item.json.amount / 100 }}\n🆔 Order ID: {{ $('Code in JavaScript').item.json.orderId }}\n🔖 Reference: {{ $('Code in JavaScript').item.json.paystackReference }}\n🏆 HubSpot Deal: Closed Won ✅",
+        "otherOptions": {
+          "unfurl_links": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        1056,
+        144
+      ],
+      "id": "bb199e78-9061-4040-883f-942691070cec",
+      "name": "Send a message1",
+      "webhookId": "489f4d47-68e3-426f-9d76-4ee61adc5e4c",
+      "credentials": {
+        "slackApi": {
+          "id": "gDwgjKyoa6htjG7R",
+          "name": "Slack account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "94d8e962-c435-4309-b433-8c241f7067f5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0b929b6ba2d4a8d33d312114f1a0c53d6d928fdb6395a910452f73d4e5e976ad"
+  },
+  "id": "NofR8WyGfUj3ITpC",
+  "tags": []
+}
