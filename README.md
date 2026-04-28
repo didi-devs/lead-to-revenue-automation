@@ -37,8 +37,7 @@ Website Signup (Webhook)
   → Notify sales team on Slack
 ```
 
-![Workflow 1 — Lead Capture](screenshots/workflow-1-lead-capture.png)
-
+![Workflow 1 — Lead Capture](lead_capture.png)
 ---
 
 ### Workflow 2 — Order Processing Pipeline
@@ -56,8 +55,7 @@ Order Webhook
   → Notify sales team on Slack
 ```
 
-![Workflow 2 — Order Processing](screenshots/workflow-2-order-processing.png)
-
+![Workflow 2 — Order Processing](order_processing.png)
 ---
 
 ### Workflow 3 — Payment Confirmation Pipeline
@@ -73,8 +71,7 @@ Paystack Payment Webhook
   → Notify sales team on Slack
 ```
 
-![Workflow 3 — Payment Confirmation](screenshots/workflow-3-payment-confirmation.png)
-
+![Workflow 3 — Payment Confirmation](payment_confirmation.png)
 ---
 
 ## 🛠️ Tech Stack
